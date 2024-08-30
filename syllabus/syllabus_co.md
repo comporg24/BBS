@@ -12,7 +12,7 @@
 
 **Telephone Number:** none.
 
-**Office Location:** 310W.
+**Office Location:** 317W.
 
 **Office Hours:** Mon(13:30-16:00), Fri(13:30-16:00), also by appointment & online.
 
