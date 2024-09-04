@@ -1,3 +1,19 @@
+We tend to represent numbers in decimal, binary, hexadecimal.
+```
+|32|16|8|4|2|1|
+       X
+      X X
+     X   X
+     XXXXX
+     X   X
+     X   X
+
+```
+
+If we dump early computer font representation, we'll have the opportunity to figure out binary to decimal conversion rules.
+
+
+
 Computer is a machine that is able to execute any algorithm.
 The algorithm has to be described in the language the computer understands. That language is called machine language.
 
@@ -29,7 +45,8 @@ Programs have several channels to write or read from by default.
 
 STDIN, STDOUT, STDERR.
 
-By default, STDIN is a keyboard, STDOUT is a paper or screen. Later on STDERR.
+By default, STDIN is a keyboard, STDOUT is a paper or screen.
+STDERR is a separate stream for debug messages of your program. You don't want to mix the debug messages and stdout.
 
 C language itself doesn't make provisions for input/output. Those functions are in the libraries.
 
