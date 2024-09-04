@@ -1,0 +1,73 @@
+Computer is a machine that is able to execute any algorithm.
+The algorithm has to be described in the language the computer understands. That language is called machine language.
+
+Assembler is a more human readable representation of machine language.
+
+Radio receiver VEF Spidola is not able to execute arbitrary program. Radio receiver is able to do things that it is supposed to do.
+
+VT100 is not a computer. It is a terminal.
+
+xterm is not a terminal: it is a terminal emulator. It is a program that is able to emulate different terminals, for example: VT100 terminal.
+
+Microchip PIC16F84 or AVR Atmega 16 is a computer. It contains CPU, RAM, flash memory for a program. However it does not have a keyboard or screen.
+
+Early computers were using modified typewriters, and Standard Output was the paper.
+Today STDOUT is the screen.
+
+Printing on the screen is much harder than printing on the paper.
+
+In case of the paper you just send number of bytes from ASCII table to the teletype writer.
+In case of the screen, you need to think of maybe shifting the content of the screen up or down.
+
+Each character on the screen is represented by a cell in video memory.
+
+The primitive video memory chip which can show 80x25 characters should have memory 80*25 bytes.
+
+Early computers allowed direct access to memory and video memory in particular.
+
+Programs have several channels to write or read from by default.
+
+STDIN, STDOUT, STDERR.
+
+By default, STDIN is a keyboard, STDOUT is a paper or screen. Later on STDERR.
+
+C language itself doesn't make provisions for input/output. Those functions are in the libraries.
+
+
+The operating system is designed to have specialized interchangable programs. Each program for each problem. Those programs can be combined together to solve more complex problems.
+
+operating system and hardware
+
+In modern operating systems programs are not able to access hardware without permission of operating system.
+
+* only kernel has hardware access
+* userspace program must ask kernel for any access
+* all hardware abstracted by operating system as files. (for example: /dev/input/mice)
+
+intro to system calls
+
+program is not able even to die without asking os.
+
+for that there is a system call exit().
+
+to execute it, we need to put
+number of the system exit() which is 60, to %rax register
+exit status (represented by a number) to %rdi register
+
+other system calls are for reading, writing, allocating and deallocating memory, etc.
+
+in order to make a system call, system call number is put in to the cpu's first register. (in case of x86_64: %rax)
+other arguments are put to other registers.
+
+see examples in the same repository.
+
+In C language, return from main() function is actually an exit status.
+
+Exit status is possible to read from shell via environment variable $?
+
+for example: `echo $?`
+
+this is system calls table for Linux/x86_64
+https://blog.rchapman.org/posts/Linux_System_Call_Table_for_x86_64/
+
+
