@@ -1,0 +1,15 @@
+
+
+     if a = 0 then 0000     cmp $0, a
+                   0001    jne       
+       aaa         0002    ...
+       bbb         0003    ...
+                   0004    ...
+                   0005    ...
+                   006    jmp
+     else              
+            
+       ccc
+       ddd
+       eee
+     end         
