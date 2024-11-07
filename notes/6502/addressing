@@ -1,0 +1,178 @@
+In 6502 assembly, $ denotes a hexadecimal (base-16) value, while # denotes an immediate value.
+
+    $20:
+        $20 represents the hexadecimal number 20. In decimal, $20 is equivalent to 32 (because 20 in hex is 2 * 16 + 0).
+        When used without the #, it typically refers to an address. For example, LDA $20 means "load the value at memory address $0020 into the accumulator."
+
+    #$20:
+        #$20 represents the hexadecimal number 20 as an immediate value.
+        The # prefix tells the assembler to interpret it as a literal number to load directly into the accumulator, rather than as an address.
+        For example, LDA #$20 means "load the immediate value 20 (in hex) directly into the accumulator." In decimal, this would load the value 32 directly.
+
+-----------------------------------------------------------------------------------------------
+    $20 (no #): Refers to address $20, which holds data you want to access.
+    #$20 (with #): Refers to immediate value 32 (decimal) that you want to load directly.
+-----------------------------------------------------------------------------------------------
+
+
+
+
+-----------------------------------------------------------------------------------------------
+1. Immediate Addressing
+
+In immediate addressing, the operand is a constant value directly specified in the instruction.
+
+    Syntax: LDA #$01
+    Example: LDA #$05 loads the value 5 directly into the accumulator.
+
+Immediate addressing is used when you want to load a specific constant into a register.
+-----------------------------------------------------------------------------------------------
+
+
+-----------------------------------------------------------------------------------------------
+2. Zero Page Addressing
+
+In zero page addressing, the operand is an address within the first 256 bytes of memory (page 0). This addressing mode is faster and requires fewer bytes for the instruction.
+
+    Syntax: LDA $00
+    Example: LDA $20 loads the value from address $0020 into the accumulator.
+
+Because the address is only a single byte (00-FF), zero-page addressing is efficient and is often used for frequently accessed variables.
+-----------------------------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------------------------
+3. Zero Page, X / Zero Page, Y (Indexed Zero Page)
+
+Zero-page indexed addressing uses the X or Y register as an offset, allowing you to access data within a range in zero-page memory.
+
+    Syntax: LDA $10, X
+    Example: If X is 3, LDA $10, X loads the value at address $0013 (calculated as $10 + X).
+
+This mode is useful for accessing arrays or buffers stored in zero page, where you iterate through elements by adjusting the index.
+-----------------------------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------------------------
+4. Absolute Addressing
+
+Absolute addressing uses a full 16-bit address, allowing access to any location in memory.
+
+    Syntax: LDA $1234
+    Example: LDA $2000 loads the value from address $2000 into the accumulator.
+
+This mode is straightforward and commonly used for fixed memory locations, such as hardware registers.
+-----------------------------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------------------------
+5. Absolute, X / Absolute, Y (Indexed Absolute)
+
+Similar to indexed zero page, indexed absolute addressing adds the X or Y register as an offset, but the base address is a full 16-bit value.
+
+    Syntax: LDA $1000, X
+    Example: If X is 4, LDA $1000, X loads the value from address $1004.
+
+This is useful for accessing larger arrays or tables stored in memory, especially when they’re not within zero page.
+-----------------------------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------------------------
+6. Indirect Addressing (for JMP only)
+
+Indirect addressing is unique to the JMP instruction. Instead of jumping to the specified address, it jumps to the address found at the location pointed to by the operand.
+
+    Syntax: JMP ($1000)
+    Example: If $1000 contains $12 and $1001 contains $34, then JMP ($1000) jumps to $3412.
+
+This mode is commonly used for jump tables, where the target addresses are stored in memory.
+-----------------------------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------------------------
+7. Indexed Indirect (Indirect, X)
+
+Indexed indirect addressing uses zero-page pointers to access data indirectly. The base address is found in zero page, and X is added to it to locate the final address.
+
+    Syntax: LDA ($20, X)
+    Example: If X is 4, and the zero-page address $24 contains $10 and $25 contains $30, then LDA ($20, X) loads the value at $3010.
+
+This is useful for accessing data structures where the pointer to data varies, often used in lookups or when working with dynamic data locations.
+-----------------------------------------------------------------------------------------------
+
+
+
+-----------------------------------------------------------------------------------------------
+8. Indirect Indexed (Indirect), Y
+
+In indirect indexed addressing, the instruction accesses memory via a zero-page pointer, with the Y register added as an offset.
+
+    Syntax: LDA ($20), Y
+    Example: If $20 contains $10 and $21 contains $30, and Y is 2, LDA ($20), Y loads the value at $3012.
+
+This is particularly useful for iterating over data that is dynamically located, allowing for flexible and efficient data access patterns.
+-----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+| Addressing Mode            | Syntax          | Example Usage    | Explanation                                                      |
+|----------------------------|-----------------|------------------|------------------------------------------------------------------|
+| **Immediate**              | LDA #$05        | LDA #$05         | Loads a constant into the register                               |
+| **Zero Page**              | LDA $20         | LDA $20          | Accesses memory within page 0 (faster and shorter instructions)  |
+| **Zero Page, X**           | LDA $10, X      | LDA $10, X       | Zero-page base with `X` offset                                   |
+| **Absolute**               | LDA $1000       | LDA $1000        | Accesses any memory location directly                            |
+| **Absolute, X**            | LDA $1000, X    | LDA $1000, X     | Absolute base with `X` offset                                    |
+| **Indirect**               | JMP ($1000)     | JMP ($1000)      | Only for `JMP`, indirect jump via a pointer                      |
+| **Indexed Indirect, X**    | LDA ($20, X)    | LDA ($20, X)     | Uses zero-page pointer with `X` offset for indirect addressing   |
+| **Indirect Indexed, Y**    | LDA ($20), Y    | LDA ($20), Y     | Uses zero-page pointer and adds `Y` offset                       |
+
+
+
+
+### Example Combining Addressing Modes
+
+example using multiple addressing modes to copy a block of data from one location to another using pointers.
+
+---------------------------------------------------------------------
+    .org $0200
+
+    ; Source pointer in zero page
+    lda #$00
+    sta $00             ; Low byte of source address ($3000)
+    lda #$30
+    sta $01             ; High byte of source address
+
+    ; Destination pointer in zero page
+    lda #$00
+    sta $02             ; Low byte of destination address ($4000)
+    lda #$40
+    sta $03             ; High byte of destination address
+
+    ldx #$05            ; Number of bytes to copy
+
+copy_loop:
+    lda ($00), y        ; Load byte from source ($3000 + Y)
+    sta ($02), y        ; Store byte in destination ($4000 + Y)
+    iny                 ; Increment Y to move to next byte
+    dex                 ; Decrement count
+    bne copy_loop       ; Repeat until X reaches 0
+
+    rts                 ; End of program
+
+---------------------------------------------------------------------
+
+    This example copies 5 bytes from a source address ($3000) to a destination address ($4000).
+    ($00), y accesses data from the source address stored in zero-page $00/$01, and Y acts as an offset to move through the data.
+    sta ($02), y stores the value at the destination address stored in zero-page $02/$03, also using Y as an offset.
+    The program loops until all bytes are copied.
+
+

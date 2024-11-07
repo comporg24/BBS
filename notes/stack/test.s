@@ -1,14 +1,16 @@
 	.file	"test.c"
-# GNU C17 (Gentoo Hardened 13.2.1_p20240210 p14) version 13.2.1 20240210 (x86_64-pc-linux-gnu)
-#	compiled by GNU C version 13.2.1 20240210, GMP version 6.3.0, MPFR version 4.2.1, MPC version 1.3.1, isl version none
+# GNU C17 (Gentoo 11.3.0 p4) version 11.3.0 (x86_64-pc-linux-gnu)
+#	compiled by GNU C version 11.3.0, GMP version 6.2.1, MPFR version 4.1.0-p13, MPC version 1.2.1, isl version none
+# warning: GMP header version 6.2.1 differs from library version 6.3.0.
+# warning: MPFR header version 4.1.0-p13 differs from library version 4.2.1.
+# warning: MPC header version 1.2.1 differs from library version 1.3.1.
 # GGC heuristics: --param ggc-min-expand=100 --param ggc-min-heapsize=131072
-# options passed: -mtune=generic -march=x86-64 -O0 -fno-stack-protector -fno-dwarf2-cfi-asm -fcf-protection
+# options passed: -mtune=generic -march=x86-64 -O0 -fno-stack-protector -fno-dwarf2-cfi-asm
 	.text
 	.globl	function
 	.type	function, @function
 function:
 .LFB0:
-	endbr64	
 	pushq	%rbp	#
 .LCFI0:
 	movq	%rsp, %rbp	#,
@@ -16,15 +18,16 @@ function:
 	movl	%edi, -36(%rbp)	# a, a
 	movl	%esi, -40(%rbp)	# b, b
 	movl	%edx, -44(%rbp)	# c, c
-# test.c:8:   ret = ret + 4;
-	addq	$16, -8(%rbp)	#, ret
+# test.c:8:   ret = buf + 18 + 8 ;
+	leaq	-18(%rbp), %rax	#, tmp84
+	addq	$26, %rax	#, tmp85
+	movq	%rax, -8(%rbp)	# tmp85, ret
 # test.c:9:   (*ret) += 7;
-	movq	-8(%rbp), %rax	# ret, tmp84
-	movl	(%rax), %eax	# *ret_4, _1
-# test.c:9:   (*ret) += 7;
+	movq	-8(%rbp), %rax	# ret, tmp86
+	movl	(%rax), %eax	# *ret_3, _1
 	leal	7(%rax), %edx	#, _2
-	movq	-8(%rbp), %rax	# ret, tmp85
-	movl	%edx, (%rax)	# _2, *ret_4
+	movq	-8(%rbp), %rax	# ret, tmp87
+	movl	%edx, (%rax)	# _2, *ret_3
 # test.c:10: }
 	nop	
 	popq	%rbp	#
@@ -40,7 +43,6 @@ function:
 	.type	main, @function
 main:
 .LFB1:
-	endbr64	
 	pushq	%rbp	#
 .LCFI3:
 	movq	%rsp, %rbp	#,
@@ -136,21 +138,5 @@ main:
 	.uleb128 0x8
 	.align 8
 .LEFDE3:
-	.ident	"GCC: (Gentoo Hardened 13.2.1_p20240210 p14) 13.2.1 20240210"
+	.ident	"GCC: (Gentoo 11.3.0 p4) 11.3.0"
 	.section	.note.GNU-stack,"",@progbits
-	.section	.note.gnu.property,"a"
-	.align 8
-	.long	1f - 0f
-	.long	4f - 1f
-	.long	5
-0:
-	.string	"GNU"
-1:
-	.align 8
-	.long	0xc0000002
-	.long	3f - 2f
-2:
-	.long	0x3
-3:
-	.align 8
-4:

@@ -3,9 +3,10 @@
 void function(int a, int b, int c)
 {
   char buf[10];
-  char buf2[6];
-  int *ret;
-  ret = ret + 4;
+  char buf2[5];  
+int *ret;
+  //ret = buf + 18 + 8 ;
+  ret = ret + 8;
   (*ret) += 7;
 }
 
