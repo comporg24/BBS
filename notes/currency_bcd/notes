@@ -1,0 +1,314 @@
+https://en.wikipedia.org/wiki/EBCDIC
+
+
+The ASCII equivalent of 42 is asterisk.  The asterisk is used in computing to represent 'anything'. So the answer to life, the universe and everything is anything ;)
+
+
+In computing, floating-point arithmetic (FP) is arithmetic using formulaic representation of real numbers as an approximation so as to support a trade-off between range and precision.
+
+https://en.wikipedia.org/wiki/Floating-point_arithmetic
+
+https://en.wikipedia.org/wiki/Floating-point_arithmetic#Accuracy_problems
+
+_________________________________________
+
+in decimal 1/3 becomes 0.33333333333333333333.... (a repeating fraction)
+becaule it cannot be written exactly as finite sum of powers of 10.
+
+
+in decimal
+
+0.1  =   1 * 10^-1   =   1/10
+
+finite in decimal because 10 is the base.
+
+
+in binary
+
+numbers are expressed as sums of fractions with denominators that are powers of 2.
+
+0.1  =  some sum of fractions like 1/2 + 1/4 + 1/8 etc....
+
+however! 1/10 cannot be written as finite sum of fractions where the denominators are powers of 2. this is because 10 is not a power of 2 or a product of powers of 2.
+
+
+so 1/10 in binary
+
+is 0.00011001100110011...
+
+there is no way to terminate it exactly by using powers of 2.
+
+in other words:
+in binary fractions are represented using 2^n denominators: 2^-1, 2^-2, 2^-3
+
+decimal 0.1 = 1/10 cannot be exactly represented as powers of 2 or a combination of powers of 2.
+
+when converting 1/10 to binary the process involves dividing repeatedly and encountering remainders that never resolve, leading to a repeating pattern.
+
+in decimal 1/3 is 0.333333.... because 3 is not a factor of 10.
+
+in binary 1/10 is 0.0001100110011... because 10 is not a power of 2.
+
+__________________________________________
+
+
+
+
+
+converting 101.11 (binary) to decimal
+integer part: 101
+fractional part: 11
+
+converting integer part: 1*2^2 + 0*2^1 + 1 * 2^0
+that would be:             4   +   0   + 1         = 5
+
+to convert fractional part we do:
+       1*2^-1 + 1*2^-2
+that would be
+       0.5 + 0.25 = 0.75
+
+combining: 5 + 0.75 = 5.75
+
+
+0.101 (binary) is 2^-1 + 2^-3 = 0.5 + 0.125 = 0.625
+
+
+
+0.1 (decimal) is 0.00011001100110011001100... (binary)
+
+this is because 0.1 in decimal does not correspond to a sum of negative powers of 2 that terminates after a finite number of terms. It is a repeating binary fraction.
+
+
+computers use a fixed number of bits (e.g., 32-bit or 64-bit floating-point numbers) to represent numbers. since 0.10.1 in binary is an infinite repeating fraction, the computer has to truncate or round it after a certain number of bits. this truncation introduces a small error.
+
+for example:
+
+    the computer might store 0.1 as something like 0.10000000000000000555 instead of 0.1 exactly.
+    this small error can propagate and become noticeable in calculations, leading to unexpected results in some cases.
+
+
+
+____________________________________________________
+
+11111111 (binary) = 2^7 + 2^6 + 2^5 + 2^4 + 2^3 + 2^2 + 2^1 + 2^0 = 255 in decimal
+
+in BCD, each group of 4 bits (a nibble) represents a single decimal digit (0–9).
+    0001 = 1
+    1001 = 9
+    1010-1111 invalid in BCD because they exceed the range of decimal digits.
+       we cannot use those combinations.
+
+    00110101 in BCD is 35
+
+      11 is 3
+      101 is 5
+
+      by using 8 bits in BCD we can only represent numbers up to 99.
+
+
+
+so to represent 255 in binary we just use 8 bits: 11111111
+but in BCD we need 12 bits: 0010 0101 0101
+                              2    5    5
+
+             but we avoid rounding errors in decimal calculations.
+
+
+__________________________________________________________________
+
+
+now 6502 and BCD!
+
+let's add 25 and 37.
+
+25 in BCD is 0010 0101
+37 in BCD is 0011 0111
+
+
+```
+CLD                   ; clear decimal mode
+SED                   ; set decimal mode
+LDA #$25              ; load A with 25 (we are in BCD mode, 25 takes 1 byte)
+CLC                   ; clar carry flag
+ADC #$37              ; add 37
+STA somewhere
+CLD                   ; clear after calculation.
+```
+the result is stored as BCD number: 0110 0010
+
+CARRY flag is set when result exceeds 99 (90 + 20)
+that case should be handled by multibyte arithmetics like you did with binary.
+
+
+multi-byte BCD example: 1234 + 5678
+
+-------
+CLD         ; clear decimal mode
+SED         ; set decimal mode
+LDA #$34    ; load low byte of our bcd number
+CLC         ; clear carry flag before operation
+ADC #$78    ; add the low byte of other bcd number
+STA RESLOW  ; store low byte of the result
+
+LDA #$12
+LDA #$56
+STA RESHIGH
+CLD
+-------------
+
+
+If you’re adding 12.34 (BCD: 0001 0010 0011 0100) and
+                 45.67 (BCD: 0100 0101 0110 0111), the addition is performed as if you’re adding 1234+4567.
+
+After the addition, you manually interpret the result as 5801 and place the decimal point to get 58.01
+
+
+__________________________________________________
+
+All floating point values that can represent a currency amount (in dollars and cents) cannot be stored exactly as it is in the memory. So, if we want to store 0.1 dollars (10 cents), float/double can not store it as it is. Instead, the binary can store only a closer approximation value (0.100000001490116119384765625 in decimal). The magnitude of this problem becomes significant (known as loss of significance) when we repetitively do arithmetic operations (multiply or divide) using these two data types. Below, we will demonstrate what this may look like.
+
+>Whether or not a rational number has a terminating expansion depends on the base. For example, in base-10, the number 1/2 has a terminating expansion (0.5) while the number 1/3 does not (0.333…). In base-2 only rationals with denominators that are powers of 2 (such as 1/2 or 3/16) are terminating. Any rational with a denominator that has a prime factor other than 2 will have an infinite binary expansion. This means that numbers which appear to be short and exact when written in decimal format may need to be approximated when converted to binary floating-point. For example, the decimal number 0.1 is not representable in binary floating-point of any finite precision; the exact binary representation would have a "1100" sequence continuing endlessly:
+
+https://en.wikipedia.org/wiki/Floating-point_arithmetic
+
+
+ Using Float, Double Instead of BigDecimal Could Be Fatal for Military
+
+On February 25, 1991, a loss of significance in a MIM-104 Patriot missile battery prevented it from intercepting an incoming Scud missile in Dhahran, Saudi Arabia, contributing to the death of 28 soldiers from the U.S. Army’s 14th Quartermaster Detachment.
+
+https://www.gao.gov/products/imtec-92-26
+https://www.gao.gov/assets/imtec-92-26.pdf
+
+
+https://dzone.com/articles/never-use-float-and-double-for-monetary-calculatio
+
+As most computers deal with data in 8-bit bytes, it is possible to use one of the following methods to encode a BCD number:
+
+    Unpacked: Each decimal digit is encoded into one byte, with four bits representing the number and the remaining bits having no significance.
+    Packed: Two decimal digits are encoded into a single byte, with one digit in the least significant nibble (bits 0 through 3) and the other numeral in the most significant nibble (bits 4 through 7).[nb 8]
+
+As an example, encoding the decimal number 91 using unpacked BCD results in the following binary pattern of two bytes:
+
+Decimal:         9         1
+Binary : 0000 1001 0000 0001
+
+In packed BCD, the same number would fit into a single byte:
+
+Decimal:    9    1
+Binary : 1001 0001
+
+Hence the numerical range for one unpacked BCD byte is zero through nine inclusive, whereas the range for one packed BCD byte is zero through ninety-nine inclusive.
+
+To represent numbers larger than the range of a single byte any number of contiguous bytes may be used. For example, to represent the decimal number 12345 in packed BCD, using big-endian format, a program would encode as follows:
+
+Decimal:    0    1    2    3    4    5
+Binary : 0000 0001 0010 0011 0100 0101
+
+
+Early models of the PlayStation 3 store the date and time in BCD. This led to a worldwide outage of the console on 1 March 2010. The last two digits of the year stored as BCD were misinterpreted as 16 causing an error in the unit's date, rendering most functions inoperable. This has been referred to as the Year 2010 problem.
+
+The main source of problems was confusion between hexadecimal number encoding and binary-coded decimal encodings of numbers. Both hexadecimal and BCD encode the numbers 0–9 as 0x0–0x9. BCD encodes the number 10 as 0x10, while hexadecimal encodes the number 10 as 0x0A; 0x10 interpreted as a hexadecimal encoding represents the number 16.
+
+For example, because the SMS protocol uses BCD for dates, some mobile phone software incorrectly reported dates of SMSes as 2016 instead of 2010. Windows Mobile is the first software reported to have been affected by this glitch; in some cases WM6 changes the date of any incoming SMS message sent after 1 January 2010 from the year 2010 to 2016.[35][36]
+
+Other systems affected include EFTPOS terminals,[37] and the PlayStation 3 (except the Slim model).[38]
+
+The most important occurrences of such a glitch were in Germany, where up to 20 million bank cards became unusable, and with Citibank Belgium, whose Digipass customer identification chips failed.[39]
+
+https://en.wikipedia.org/wiki/Year_2000_problem#Year_2010_problem
+
+
+https://en.wikipedia.org/wiki/Double_dabble
+
+42
+
+101010 (binary) = 42 (decimal)
+
+BCD
+
+0100    0010
+
+4         2
+
+
+ASCII
+
+
+0110100   0110010
+
+
+echo "ibase=2;0110100" | bc -l
+
+
+
+algorithm:
+
+
+binary source:  1010 (10 in decimal)
+desired result: 0001 0000
+double dabble.
+
+double means shifting.
+
+
+0000   0000      1010
+0000   0001      010
+0000   0010      10
+0000   0101      0
+
+now 101 is => 5; therefore add 3 (011)
+
+       0101
+     + 0011
+     ______
+       1000
+
+0000   1000  0
+0001   0000
+
+desired result. (:
+
+
+http://www.eprg.org/computerphile/fortytwo.pdf
+
+http://www.eprg.org/computerphile/doubledabble.pdf
+
+
+_______________________________
+
+42 is 101010
+
+tens  units   binary
+
+0000  0000    101010
+0000  0001    01010     shift 1
+0000  0010    1010      shift 2
+0000  0101    010       shift 3
+0000  1000    010       add 3 to units
+0001  0000    10        shift 4
+0010  0001    0         shift 5
+0100  0010
+
+
+_________________________________
+
+Let's say you have value 0x37 in BL, and you want to extract it into BH (0x03) and BL (0x07), then for example this code will calculate that:
+
+movb %bl,    %bh   ; copy the packed value also into BH
+andb $0x0F,  %bl   ; keep only lower 4 bits in BL (0x37 & 0x0F = 0x07)
+# andb $0b00001111, %bl
+shrb $4,     %bh   ; shift right by 4 bits BH (unsigned(0x37) >> 4 = 0x03)
+; and that's it, it's that simple to manipulate bits in assembly
+
+
+https://stackoverflow.com/questions/46133768/how-to-convert-from-bcd-to-ascii-and-print-the-result
+
+>BCD is useful at the very low end of the electronics spectrum, when the value in a register is displayed by some output device. For example, say you have a calculator with a number of seven-segment displays that show a number. It is convenient if each display is controlled by separate bits.
+
+https://stackoverflow.com/questions/2359527/assembler-why-bcd-exists
+
+https://www.youtube.com/watch?v=eXIfZ1yKFlA
+https://www.youtube.com/watch?v=RDoYo3yOL_E
+
+https://medium.com/@cancerian0684/which-data-type-would-you-choose-for-storing-currency-values-like-trading-price-dd7489e7a439
+https://eevibes.com/pic16f4550-microcontroller/how-to-perform-packed-bcd-to-ascii-conversion/
