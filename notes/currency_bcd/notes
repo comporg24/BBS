@@ -93,6 +93,7 @@ ____________________________________________________
 11111111 (binary) = 2^7 + 2^6 + 2^5 + 2^4 + 2^3 + 2^2 + 2^1 + 2^0 = 255 in decimal
 
 in BCD, each group of 4 bits (a nibble) represents a single decimal digit (0–9).
+    0000 = 0
     0001 = 1
     1001 = 9
     1010-1111 invalid in BCD because they exceed the range of decimal digits.
