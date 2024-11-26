@@ -1,7 +1,7 @@
   ultimate risc cpu
 
 
-  one instruction is substruction
+  one instruction is subtruction
   4 - -4
 
   is the same as addition
@@ -105,7 +105,7 @@ assembler:
 
 # output *p;
 
-a: 
+a:
 
 
 
