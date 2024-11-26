@@ -1,0 +1,120 @@
+  ultimate risc cpu
+
+
+  one instruction is substruction
+  4 - -4
+
+  is the same as addition
+
+  set memory locations to zero
+
+  n - n = 0
+
+_____________________
+
+SUBLEQ
+
+(sub for subtractt)
+
+works directly on memory, no registers.
+
+
+__________________________
+
+copy a value
+
+ copy value from one address to another:
+
+* address 100, 'a', contains 7.
+* copy it to address 200, we call it 'b'
+* need a third location, address 150, 'z'. which is zero.
+
+  b = b - b ; means b = 0
+  z = z - a ; means z = 0 - 7, so z = -7
+  b = b - z ; means b = 0 - -7; so b = 7
+  z = z - z ; housekeeping, to reset z to 0.
+
+____________________________
+
+  add i to 'a'
+
+  assuming that 'i', address 151, contains 1
+
+  z = z - i;  means z = 0 - 1; so z = -1
+  a = a - z;  means a = 7 - -1; so a = 8
+  z = z - z;  housekeeping to reset z to 0.
+
+  no need to reset i, it did not change.
+
+_____________________________
+
+
+  SUBLEQ command means:
+    subtractt branch less than or equal to zero
+
+   if the result of the subtracttion is less than 1 {0, -1, -2, ...}
+   then branch to an address.
+
+   means we can do substruction,
+   if result is zero, then the numbers are equal
+   if result is less than zero, then we can do < and >.
+   if you don't care about the result of the subtracttion then
+      just set branch address to the next instruction.
+   that way cpu will continue at next instruction regardless of the subtraction result.
+
+
+
+_______________________________
+
+  in practice, you don't need an opcode.
+  you write a, b, addr.
+
+  that instruction subtracts the value of memore 'a' from the value in 'b'.
+
+  (b) - (a)
+
+
+  example:
+
+  command: 3, 4, 6.
+  (4) - (3); jump to 6.
+
+  our memory has:
+
+  0: 3 4 6
+  3: 7 7 7
+  6: 3 4 0
+
+  7 - 7 ; is equal to 0
+  (4) is now 0;
+  so
+  3: 7 0 7
+  goto 6;
+  0 - 7 ; is equal to -7
+  3: 7 -7 7
+  goto 0;
+
+___________________________________
+
+
+http://mazonka.com/subleq/hsq.html
+
+assembler:
+
+# hello world!
+
+# output *p;
+
+a: 
+
+
+
+
+
+
+
+
+
+
+http://mazonka.com/subleq/
+https://www.youtube.com/watch?v=jRZDnetjGuo
