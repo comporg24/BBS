@@ -55,7 +55,7 @@ _____________________________
    if the result of the subtracttion is less than 1 {0, -1, -2, ...}
    then branch to an address.
 
-   means we can do substruction,
+   means we can do subtruction,
    if result is zero, then the numbers are equal
    if result is less than zero, then we can do < and >.
    if you don't care about the result of the subtracttion then
